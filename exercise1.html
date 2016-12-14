@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Exercise 1</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/skel.min.js"></script>
+    <script src="js/skel-layers.min.js"></script>
+    <script src="js/init.js"></script>
+
+    <style>
+        a {
+            text-decoration: none;
+            color: black;
+        }
+
+        div.box_pic {
+            width: 320px;
+            height: 240px;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+
+        div.box_map {
+            width: 600px;
+            height: 600px;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+
+    </style>
+    <noscript>
+        <link rel="stylesheet" href="css/skel.css"/>
+        <link rel="stylesheet" href="css/style.css"/>
+        <link rel="stylesheet" href="css/style-xlarge.css"/>
+    </noscript>
+    <script>
+        var nowPage, totalPage;
+        //each page comtains 6 data, start with 0
+        var table;
+        function nextPage() {
+            if (nowPage == totalPage);
+            else {
+                nowPage += 1;
+                ListaPage();
+            }
+        }
+
+        function lastPage() {
+            if (nowPage == 0);
+            else {
+                nowPage -= 1;
+                ListaPage();
+            }
+        }
+
+        function getInformation(i) {
+            var map = document.getElementById('maps');
+            var url = 'http://maps.google.com.tw/maps?f=q&hl=zh-TW&geocode=&q=';
+            url += items[i].Add + '&z=16&output=embed&t=';
+            map.src = url;
+            //input google map w/ combine url and address
+
+            document.getElementById("name").innerHTML = items[i].Name;
+            document.getElementById("web").href = items[i].Website;
+            //use document add information in it
+
+            document.getElementById("pic1").src = items[i].Picture1;
+            document.getElementById("pic1_txt").innerHTML = items[i].Picdescribe1;
+            //document.getElementById("picURL_1").setAttribute("href", items[i].Picture1);
+            document.getElementById("pic2").src = items[i].Picture2;
+            document.getElementById("pic2_txt").innerHTML = items[i].Picdescribe2;
+            //document.getElementById("picURL_2").setAttribute("href", items[i].Picture2);
+            document.getElementById("pic3").src = items[i].Picture3;
+            document.getElementById("pic3_txt").innerHTML = items[i].Picdescribe3;
+            //document.getElementById("picURL_3").setAttribute("href", items[i].Picture3);
+            //add picture and its describle into the doucument ass parameters
+            // !!-> setAttribute() here would cause something goes wrong
+
+            document.getElementById("address").innerHTML = items[i].Add;
+            document.getElementById("description").innerHTML = items[i].Description;
+            document.getElementById("phone").innerHTML = items[i].Tel;
+            //same as above
+        }
+
+
+        function ListaPage() {
+            var str = "";
+            for (var i = 0 + (nowPage * 6); i < 6 + (nowPage * 6); i++) {
+                var address = items[i].Add;
+                var name = items[i].Name;
+                var pictureURL = items[i].Picture1;
+
+                str += '<div class="col-xs-12 col-sm-4 col-ms-4">';
+
+                str += '<section class="box"><a href="javascript: void(0)" onclick="getInformation(' + i + ')" >';
+                str += '<div class="box_pic"><img class="img-thumbnail" id="hotel_pic_' + i + '" src=' + pictureURL + ' height="240" alt="ERR"></div><br>';
+                str += '<h3 id="hotel_name_' + i + '" >' + name + '</h3><br><h4="hotel_address_' + i + '">';
+                str += address + '</h4></a></section>';
+
+                str += '</div>';
+            }
+
+            table.innerHTML = str;
+            document.getElementById('nowPage').innerHTML = nowPage + 1;
+            //nowPage start with 0, but page that user see start with 1
+        }
+
+        $(function () {
+            $.ajax({
+                url: "http://140.134.26.71:58080/web-prog/Hotels",
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    table = document.getElementById('hoteltable');
+                    items = data.Infos.Info;
+                    totalPage = items.length / 6;
+                    nowPage = 0;
+                    ListaPage();
+                },
+                error: function () {
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<div>
+    <a class="button" onClick="lastPage()">Last Page</a>
+    <span style="font-family: Impact, Haettenschweiler, 'Franklin Gothic Bold', 'Arial Black', sans-serif">Page.
+            <lable id="nowPage"></lable>
+          	</span>
+    <lable id="nowPage"></lable>
+    <a class="button" onClick="nextPage()">Next Page</a><br>
+</div>
+
+<!-- PART ONE, TABLE -->
+<div>
+    <div class="row" id="hoteltable"></div>
+</div>
+<br>
+<br>
+
+<!-- PART TWO, BUTTONS -->
+<div>
+    <a class="button" onClick="lastPage()">Last Page</a>
+    <span style="font-family: Impact, Haettenschweiler, 'Franklin Gothic Bold', 'Arial Black', sans-serif">Page.
+            <lable id="nowPage"></lable>
+          	</span>
+    <lable id="nowPage"></lable>
+    <a class="button" onClick="nextPage()">Next Page</a><br>
+</div>
+
+<br>
+
+<!-- PART THREE, DETAIL -->
+<div>
+    <!-- PART THREE, LEFT -->
+    <div class="col-xs-12 col-sm-6 col-ms-6">
+        <a href="javascript: void(0)" id="web"><h2 id="name">Choose a Hotel</h2></a>
+
+        <h3> Address: </h3>
+        <p id="address"></p>
+        <h3> Telphone: </h3>
+        <p id="phone"></p>
+        <h4> About: </h4>
+        <p id="description" style="LINE-HEIGHT: 14pt "></p>
+
+    </div>
+    <!-- PART THREE, RIGHT -->
+    <div class="box_map col-xs-12 col-sm-6 col-ms-6">
+        <iframe id='maps' src="http://maps.google.com.tw/maps?f=q&hl=zh-TW&geocode=&q=&z=16&output=embed&t="
+                width="600" height="600" allowfullscreen></iframe>
+    </div>
+</div>
+<!-- PART FOUR, HOTEL PICTURES-->
+<div>
+    <div class="col-sm-4 col-xs-12 col-ms-4">
+        <img class="img-thumbnail" src="" id="pic1" alt="ERR">
+        <br>
+        <p id="pic1_txt" align="center"></p>
+    </div>
+
+    <div class="col-sm-4 col-xs-12 col-ms-4">
+        <img class="img-thumbnail" src="" id="pic2" alt="ERR">
+        <br>
+        <p id="pic2_txt" align="center"></p>
+    </div>
+
+    <div class="col-sm-4 col-xs-12 col-ms-4">
+        <img class="img-thumbnail" src="" id="pic3" alt="ERR">
+        <br>
+        <p id="pic3_txt" align="center"></p>
+    </div>
+</div>
+
+</body>
+</html>
